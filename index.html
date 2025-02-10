@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>클리커 사이트</title>
+    <style>
+        body { 
+            text-align: center; 
+            font-family: 'Arial', sans-serif; 
+            background-color: #f0f8ff; 
+            margin: 0; 
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        h1 { 
+            font-size: 36px; 
+            color: #333; 
+            margin-bottom: 20px; 
+        }
+        #counter { 
+            font-size: 50px; 
+            font-weight: bold; 
+            margin-bottom: 30px; 
+            color: #ff6347;
+        }
+        #clickBtn { 
+            background-color: #ff6347; 
+            color: white; 
+            border: none; 
+            padding: 15px 30px; 
+            font-size: 18px; 
+            border-radius: 5px; 
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        #clickBtn:hover { 
+            background-color: #e5533f; 
+        }
+        #phoneForm { 
+            display: none; 
+            margin-top: 20px; 
+            background-color: #fff; 
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+        #phoneInput { 
+            padding: 10px; 
+            font-size: 16px; 
+            width: 100%; 
+            margin-top: 10px; 
+            border-radius: 5px; 
+            border: 1px solid #ccc;
+        }
+        #submitPhone { 
+            background-color: #32cd32; 
+            color: white; 
+            border: none; 
+            padding: 12px 25px; 
+            font-size: 16px; 
+            margin-top: 15px; 
+            border-radius: 5px; 
+            cursor: pointer;
+        }
+        #submitPhone:hover { 
+            background-color: #28a745; 
+        }
+    </style>
+</head>
+<body>
+    <h1>클리커 사이트</h1>
+    <div id="counter">0</div>
+    <button id="clickBtn">Click Me</button>
+
+    <div id="phoneForm">
+        <p>50번 클릭 달성! 전화번호를 입력하세요:</p>
+        <input type="text" id="phoneInput" placeholder="전화번호 입력">
+        <button id="submitPhone">전송</button>
+    </div>
+
+    <script>
+        // 서버에서 카운트를 가져오기
+        async function fetchClickCount() {
+            const response = await fetch('/getClickCount');
+            const data = await response.json();
+            document.getElementById("counter").innerText = data.count.toLocaleString();
+
+            // 50번 클릭 도달 시 전화번호 입력창 표시
+            if (data.count >= 50) {
+                document.getElementById("phoneForm").style.display = "block";
+            }
+        }
+
+        // 카운트 증가 요청
+        async function incrementClick() {
+            const response = await fetch('/incrementClick', { method: 'POST' });
+            const data = await response.json();
+            document.getElementById("counter").innerText = data.count.toLocaleString();
+
+            // 50번 클릭 도달 시 전화번호 입력창 표시
+            if (data.count >= 50) {
+                document.getElementById("phoneForm").style.display = "block";
+            }
+        }
+
+        // 클릭 시 카운트 증가
+        document.getElementById("clickBtn").addEventListener("click", incrementClick);
+
+        // 전화번호 입력 후 전송
+        document.getElementById("submitPhone").addEventListener("click", () => {
+            const phoneNumber = document.getElementById("phoneInput").value;
+            console.log("입력된 전화번호:", phoneNumber);
+            alert("전송 완료!");
+            document.getElementById("phoneForm").style.display = "none";
+        });
+
+        // 페이지 로드 시 카운트 표시
+        fetchClickCount();
+    </script>
+</body>
+</html>
